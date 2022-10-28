@@ -4,6 +4,12 @@ import 'package:unicons/unicons.dart';
 import 'package:clipboard/clipboard.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
+import 'dart:math';
+import 'package:speech_to_text/speech_recognition_error.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:fyp_translation_apps/pages/word.dart';
 
 class Translation extends StatefulWidget {
   const Translation({super.key});
@@ -11,6 +17,8 @@ class Translation extends StatefulWidget {
   @override
   State<Translation> createState() => _TranslationState();
 }
+
+typedef Future<Null> Action();
 
 class _TranslationState extends State<Translation> {
   final List<String> Sourcelanguage = <String>[
@@ -147,14 +155,45 @@ class _TranslationState extends State<Translation> {
   TextEditingController sourceTextEditingController = TextEditingController();
   TextEditingController destTextEditingController = TextEditingController();
   String pasteValue = '';
+  bool _hasSpeech = false;
+  double level = 0.0;
+  double minSoundLevel = 50000;
+  double maxSoundLevel = -50000;
+  List<Word> lastWords = [];
+  String lastError = "";
+  String lastStatus = "";
+  String _currentLocaleId = "";
+  List<String> _localeNames = [];
+  final SpeechToText speech = SpeechToText();
+  Random random = Random();
+  List<Widget> wordWidgets = [];
+  @override
+  void initState() {
+    super.initState();
+    initSpeechState();
+  }
+
+  Future<void> initSpeechState() async {
+    bool hasSpeech = await speech.initialize(
+        onError: errorListener, onStatus: statusListener);
+    if (hasSpeech) {
+      _localeNames = Sourcelanguage;
+
+      //var systemLocale = await speech.systemLocale();
+      _currentLocaleId = sourcemap[SourceselectedValue]!['stt']!;
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _hasSpeech = hasSpeech;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.blue,
-        title: const Text("Cityu Translation!"),
-      ),
       body: SingleChildScrollView(
         child: Stack(
           children: <Widget>[
@@ -188,6 +227,8 @@ class _TranslationState extends State<Translation> {
                               onChanged: (value) {
                                 setState(() {
                                   SourceselectedValue = value!;
+                                  _switchLang(sourcemap[SourceselectedValue]!['stt']!);
+                                  translate(sourceTextEditingController.text);
                                 });
                               },
                               icon: const Icon(
@@ -251,6 +292,7 @@ class _TranslationState extends State<Translation> {
                               onChanged: (value) {
                                 setState(() {
                                   DestselectedValue = value!;
+                                  translate(sourceTextEditingController.text);
                                 });
                               },
                               icon: const Icon(
@@ -303,7 +345,7 @@ class _TranslationState extends State<Translation> {
                     TextField(
                       controller: sourceTextEditingController,
                       keyboardType: TextInputType.multiline,
-                      maxLines: 4,
+                      maxLines: 6,
                       maxLength: 128,
                       decoration: const InputDecoration(
                           hintText: "Enter Text",
@@ -316,6 +358,14 @@ class _TranslationState extends State<Translation> {
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                   width: 1, color: Colors.redAccent))),
+                      onChanged: (text) {
+                        translate(sourceTextEditingController.text);
+                        TextSelection previousSelection =
+                            sourceTextEditingController.selection;
+                        sourceTextEditingController.text = text;
+                        sourceTextEditingController.selection =
+                            previousSelection;
+                      },
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -323,8 +373,9 @@ class _TranslationState extends State<Translation> {
                         OutlinedButton.icon(
                           onPressed: () {
                             setState(() {
-                              sourceTextEditingController.text = "";
-                              destTextEditingController.text = "";
+                              wordWidgets.clear();
+                              sourceTextEditingController.clear();
+                              destTextEditingController.clear();
                             });
                           },
                           icon: Icon(UniconsLine.times),
@@ -372,7 +423,7 @@ class _TranslationState extends State<Translation> {
                     TextField(
                       controller: destTextEditingController,
                       keyboardType: TextInputType.multiline,
-                      maxLines: 4,
+                      maxLines: 6,
                       readOnly: true,
                       //maxLength: 128,
                       decoration: const InputDecoration(
@@ -390,21 +441,80 @@ class _TranslationState extends State<Translation> {
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 10),
                     ),
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        setState(() {
-                          translate(sourceTextEditingController.text);
-                        });
-                      },
-                      icon: Icon(UniconsLine.english_to_chinese),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide(width: 1.0, color: Colors.green),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                    /*OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(UniconsLine.star),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(width: 1.0, color: Colors.green),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          label: Text("Translate"),
+                        ),*/
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(UniconsLine.camera_plus),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(width: 1.0, color: Colors.green),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          label: Text("OCR"),
                         ),
-                      ),
-                      label: Text("Translate"),
+                        OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(UniconsLine.star),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(width: 1.0, color: Colors.green),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          label: Text("Bookmark"),
+                        ),
+                      ],
                     ),
+                    GestureDetector(
+                    onTap: () {
+                      if (_hasSpeech) {
+                        if (speech.isListening) {
+                          stopListening();
+                        } else {
+                          startListening();
+                        }
+                      }
+                    },
+                    child: Container(
+                        width: 100,
+                        height: 100,
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                                blurRadius: 0,
+                                spreadRadius: level * 1.5,
+                                color: Colors.red.withOpacity(0.5))
+                          ],
+                          color: speech.isListening ? Colors.red : Colors.red,
+                          // border: Border.all(
+                          //   color: Colors.black26,
+                          //   width: 1,
+                          //   style: speech.isListening ? BorderStyle.none : BorderStyle.solid,
+                          // ),
+                          borderRadius: BorderRadius.all(Radius.circular(100)),
+                        ),
+                        child: Icon(
+                          Icons.mic,
+                          size: 40,
+                          color:
+                              !speech.isListening ? Colors.white : Colors.white,
+                        )),
+                  ),
                   ],
                 ),
               ),
@@ -413,6 +523,131 @@ class _TranslationState extends State<Translation> {
         ),
       ),
     );
+  }
+
+  void startListening() {
+    lastWords.clear();
+    //actionQueue.clear();
+    speech.listen(
+        onResult: resultListener,
+        listenFor: Duration(seconds: 60),
+        pauseFor: Duration(seconds: 10),
+        localeId: _currentLocaleId,
+        onSoundLevelChange: soundLevelListener,
+        cancelOnError: true,
+        // onDevice: true,
+        listenMode: ListenMode.deviceDefault);
+    setState(() {});
+  }
+
+  void stopListening() {
+    speech.stop();
+    //textEditingController.text = speech.lastRecognizedWords;
+    //print(textEditingController.text);
+    setState(() {
+      level = 0.0;
+    });
+  }
+
+  void cancelListening() {
+    speech.cancel();
+    print('cancel');
+    setState(() {
+      level = 0.0;
+    });
+  }
+
+  void resultListener(SpeechRecognitionResult result) {
+    setState(() {
+      var words = result.recognizedWords.split(' ');
+      if (words.length > 0 && words[0].isNotEmpty) {
+        List<Word> ww = [];
+        for (var i = 0; i < words.length; i++) {
+          if (i >= lastWords.length) {
+            print(words[i]);
+            var word = Word(words[i]);
+            ww.add(word);
+            print(word);
+            lastWords.add(word);
+            //textEditingController.text = word.value;
+            /*var cursorPos = textEditingController.selection.base.offset;
+            String suffixText = textEditingController.text.substring(cursorPos);
+            int length = word.value.length;
+            String prefixText =
+                textEditingController.text.substring(0, cursorPos);
+            textEditingController.text = prefixText + word.value + suffixText;
+            textEditingController.selection = TextSelection(
+              baseOffset: cursorPos + length,
+              extentOffset: cursorPos + length,
+            );*/
+            if (sourceTextEditingController.text.length > 0) {
+              var cursorPos = sourceTextEditingController.selection.base.offset;
+              String suffixText =
+                  sourceTextEditingController.text.substring(cursorPos);
+              int length = word.value.length;
+              String prefixText =
+                  sourceTextEditingController.text.substring(0, cursorPos);
+              sourceTextEditingController.text =
+                  prefixText + word.value + suffixText;
+              sourceTextEditingController.selection = TextSelection(
+                baseOffset: cursorPos + length,
+                extentOffset: cursorPos + length,
+              );
+            } else {
+              sourceTextEditingController.text = word.value;
+              sourceTextEditingController.value =
+                  sourceTextEditingController.value.copyWith(
+                text: word.value,
+                selection: TextSelection.fromPosition(
+                  TextPosition(offset: word.value.length),
+                ),
+              );
+            }
+          }
+        }
+        //if (ww.length > 0) _addToQueue(ww);
+      }
+
+      // print("@ ${result.recognizedWords}=>$last");
+      // if (last.isNotEmpty && lastWords.length == 0 || lastWords.last.value != last) {
+      //   print(last);
+      //   lastWords.add(Word(last, random));
+      // }
+    });
+  }
+
+  void soundLevelListener(double level) {
+    minSoundLevel = min(minSoundLevel, level);
+    maxSoundLevel = max(maxSoundLevel, level);
+    // print("sound level $level: $minSoundLevel - $maxSoundLevel ");
+    setState(() {
+      this.level = level;
+    });
+  }
+
+  void errorListener(SpeechRecognitionError error) {
+    // print("Received error status: $error, listening: ${speech.isListening}");
+    setState(() {
+      lastError = "${error.errorMsg} - ${error.permanent}";
+      print(lastError);
+    });
+  }
+
+  void statusListener(String status) {
+    // print(
+    // "Received listener status: $status, listening: ${speech.isListening}");
+    setState(() {
+      lastStatus = "$status";
+      print(lastStatus);
+      level = 0.0;
+    });
+  }
+
+  void _switchLang(String selectedVal) {
+    setState(() {
+      _currentLocaleId = selectedVal;
+    });
+    print(selectedVal);
   }
 
   void translate(text) async {
