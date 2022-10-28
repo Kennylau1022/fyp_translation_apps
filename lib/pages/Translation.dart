@@ -593,6 +593,7 @@ class _TranslationState extends State<Translation> {
                 baseOffset: cursorPos + length,
                 extentOffset: cursorPos + length,
               );
+              translate(sourceTextEditingController.text);
             } else {
               sourceTextEditingController.text = word.value;
               sourceTextEditingController.value =
@@ -602,6 +603,7 @@ class _TranslationState extends State<Translation> {
                   TextPosition(offset: word.value.length),
                 ),
               );
+              translate(sourceTextEditingController.text);
             }
           }
         }
