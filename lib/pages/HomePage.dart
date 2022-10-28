@@ -4,6 +4,8 @@ import 'package:unicons/unicons.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fyp_translation_apps/data.dart';
 
+import 'CPage.dart';
+import 'Translation.dart';
 import 'home.dart';
 
 class HomePage extends StatefulWidget {
@@ -92,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => BPage(),
+                                    builder: (context) => Translation(),
                                   ));
                             },
                             child: Center(
