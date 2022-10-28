@@ -63,31 +63,53 @@ class _HomePageState extends State<HomePage> {
                   child: GridView.count(
                     //padding: const EdgeInsets.all(10),
                     padding: EdgeInsets.all(10.0),
-                    crossAxisCount: 2,
-                    childAspectRatio: 1.4,
-                    crossAxisSpacing: 10,
+                    crossAxisCount: 1,
+                    childAspectRatio: 3.0,
+                    //crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
                     children: <Widget>[
                       Card(
+                        color: Colors.transparent,
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                         elevation: 20.0,
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => BPage(),
-                                ));
-                          },
-                          child: Center(
-                            child: Column(
-                              children: const <Widget>[
-                                Icon(UniconsLine.english_to_chinese,
-                                    size: 80, color: Colors.blue),
-                                Text("Translation",
-                                    style: TextStyle(fontSize: 15.0)),
+                        child: Container(
+                            decoration: BoxDecoration(
+                            border:
+                                Border.all(width: 0, color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(22),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.red,
+                                // cardBorderColor,
+                                Theme.of(context).colorScheme.surface,
                               ],
+                              stops: [0, 0.8],
+                            ),
+                          ),
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => BPage(),
+                                  ));
+                            },
+                            child: Center(
+                              child: Row(
+                                children: const <Widget>[
+                                  SizedBox(
+                                    width: 30,
+                                  ),
+                                  Icon(UniconsLine.english_to_chinese,
+                                      size: 80, color: Colors.blue),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text("Translation",
+                                      style: TextStyle(fontSize: 25.0)),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -96,21 +118,42 @@ class _HomePageState extends State<HomePage> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                         elevation: 20.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border:
+                                Border.all(width: 0, color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(22),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.blue,
+                                // cardBorderColor,
+                                Theme.of(context).colorScheme.surface,
+                              ],
+                              stops: [0, 0.8],
+                            ),
+                          ),
                         child: InkWell(
                           onTap: () {},
                           child: Center(
-                            child: Column(
+                            child: Row(
                               children: const <Widget>[
-                                Icon(UniconsLine.file_info_alt,
+                                SizedBox(
+                                  width: 30,
+                                ),
+                                Icon(UniconsLine.camera_plus,
                                     size: 80, color: Colors.red),
-                                Text("Full Translation",
-                                    style: TextStyle(fontSize: 15.0)),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Text("Image To Text",
+                                    style: TextStyle(fontSize: 25.0)),
                               ],
                             ),
                           ),
                         ),
+                        ),
                       ),
-                      Card(
+                      /*Card(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                         elevation: 20.0,
@@ -127,23 +170,44 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         ),
-                      ),
+                      ),*/
                       Card(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12)),
                         elevation: 20.0,
+                        child: Container(
+                           decoration: BoxDecoration(
+                            border:
+                                Border.all(width: 0, color: Colors.transparent),
+                            borderRadius: BorderRadius.circular(22),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.purpleAccent,
+                                // cardBorderColor,
+                                Theme.of(context).colorScheme.surface,
+                              ],
+                              stops: [0, 0.8],
+                            ),
+                          ),
                         child: InkWell(
                           onTap: () {},
                           child: Center(
-                            child: Column(
+                            child: Row(
                               children: const <Widget>[
+                                SizedBox(
+                                  width: 30,
+                                ),
                                 Icon(UniconsLine.comments_alt,
                                     size: 80, color: Colors.purple),
+                                SizedBox(
+                                  width: 10,
+                                ),
                                 Text("Conversation",
-                                    style: TextStyle(fontSize: 15.0)),
+                                    style: TextStyle(fontSize: 25.0)),
                               ],
                             ),
                           ),
+                        ),
                         ),
                       ),
                     ],
