@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:unicons/unicons.dart';
 import 'package:clipboard/clipboard.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class Translation extends StatefulWidget {
   const Translation({super.key});
@@ -19,15 +21,28 @@ class _TranslationState extends State<Translation> {
     'German',
     'Korean',
     'Dutch',
-    'Spanish ',
-    'Polish ',
-    'Russian ',
+    'Spanish',
+    'Polish',
+    'Russian',
+  ];
+  final List<String> Destlanguage = <String>[
+    'Chinese',
+    'English',
+    'Japanese',
+    'French',
+    'German',
+    'Korean',
+    'Dutch',
+    'Spanish',
+    'Polish',
+    'Russian',
   ];
   String SourceselectedValue = 'Chinese';
+  String DestselectedValue = 'English';
   Map<String, Map<String, String>> sourcemap = <String, Map<String, String>>{
     'Chinese': {
       //'tts': 'zh',
-      'google': 'zh-HK',
+      'google': 'zh-tw',
       'stt': 'zh-HK',
     },
     'English': {
@@ -76,6 +91,59 @@ class _TranslationState extends State<Translation> {
       'stt': 'ru-RU',
     },
   };
+  Map<String, Map<String, String>> destmap = <String, Map<String, String>>{
+    'Chinese': {
+      'tts': 'zh-HK',
+      'google': 'zh-tw',
+      //'stt': 'zh-HK',
+    },
+    'English': {
+      'tts': 'en-US',
+      'google': 'en',
+      //'stt': 'en-US',
+    },
+    'Japanese': {
+      'tts': 'ja-JP',
+      'google': 'ja',
+      //'stt': 'ja-JP',
+    },
+    'French': {
+      'tts': 'fr-FR',
+      'google': 'fr',
+      //'stt': 'fr-FR',
+    },
+    'German': {
+      'tts': 'de-DE',
+      'google': 'de',
+      //'stt': 'de-DE',
+    },
+    'Korean': {
+      'tts': 'ko-KR',
+      'google': 'ko',
+      //'stt': 'ko-KR',
+    },
+    'Dutch': {
+      'tts': 'nl-NL',
+      'google': 'nl',
+      //'stt': 'nl-NL',
+    },
+    'Spanish': {
+      'tts': 'es-ES',
+      'google': 'es',
+      //'stt': 'es-ES',
+    },
+    'Polish': {
+      'tts': 'pl-PL',
+      'google': 'pl',
+      //'stt': 'pl-PL',
+    },
+    'Russian': {
+      'tts': 'ru-RU',
+      'google': 'ru',
+      //'stt': 'ru-RU',
+    },
+  };
+  String translated = '';
   TextEditingController sourceTextEditingController = TextEditingController();
   TextEditingController destTextEditingController = TextEditingController();
   String pasteValue = '';
@@ -166,7 +234,7 @@ class _TranslationState extends State<Translation> {
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton2(
                               isExpanded: true,
-                              items: Sourcelanguage.map(
+                              items: Destlanguage.map(
                                   (item) => DropdownMenuItem<String>(
                                         value: item,
                                         child: Text(
@@ -179,10 +247,10 @@ class _TranslationState extends State<Translation> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       )).toList(),
-                              value: SourceselectedValue,
+                              value: DestselectedValue,
                               onChanged: (value) {
                                 setState(() {
-                                  SourceselectedValue = value!;
+                                  DestselectedValue = value!;
                                 });
                               },
                               icon: const Icon(
@@ -238,7 +306,7 @@ class _TranslationState extends State<Translation> {
                       maxLines: 4,
                       maxLength: 128,
                       decoration: const InputDecoration(
-                          hintText: "Enter Remarks",
+                          hintText: "Enter Text",
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
                                 width: 3,
@@ -256,6 +324,7 @@ class _TranslationState extends State<Translation> {
                           onPressed: () {
                             setState(() {
                               sourceTextEditingController.text = "";
+                              destTextEditingController.text = "";
                             });
                           },
                           icon: Icon(UniconsLine.times),
@@ -301,7 +370,7 @@ class _TranslationState extends State<Translation> {
                       margin: const EdgeInsets.symmetric(vertical: 10),
                     ),
                     TextField(
-                      controller: sourceTextEditingController,
+                      controller: destTextEditingController,
                       keyboardType: TextInputType.multiline,
                       maxLines: 4,
                       readOnly: true,
@@ -318,6 +387,24 @@ class _TranslationState extends State<Translation> {
                               borderSide: BorderSide(
                                   width: 1, color: Colors.redAccent))),
                     ),
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          translate(sourceTextEditingController.text);
+                        });
+                      },
+                      icon: Icon(UniconsLine.english_to_chinese),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(width: 1.0, color: Colors.green),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      label: Text("Translate"),
+                    ),
                   ],
                 ),
               ),
@@ -326,5 +413,28 @@ class _TranslationState extends State<Translation> {
         ),
       ),
     );
+  }
+
+  void translate(text) async {
+    //const apiKey = 'AIzaSyCkVgDjHggIJQrtvyMpJfaYQAVnAnK9uEQ';
+    String to = destmap[DestselectedValue]!['google']!;
+    String src = sourcemap[SourceselectedValue]!['google']!;
+    final url = Uri.parse(
+      'https://translate.eugene-lam.hk?dest=$to&text=$text&src=$src',
+    );
+    final response = await http.get(url);
+    print(response.body);
+    if (response.statusCode == 200) {
+      print(response);
+      final body = json.decode(response.body);
+      print(body);
+      final tranlations = body['translated_text'];
+      print(tranlations);
+      translated = body['translated_text'] ?? "";
+      print(translated);
+      setState(() {
+        destTextEditingController.text = translated;
+      });
+    }
   }
 }
