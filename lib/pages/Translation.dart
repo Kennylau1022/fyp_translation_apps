@@ -340,9 +340,9 @@ class _TranslationState extends State<Translation> {
                         Text("From", style: TextStyle(fontSize: 25.0)),
                       ],
                     ),
-                    Container(
+                    /*Container(
                       margin: const EdgeInsets.symmetric(vertical: 10),
-                    ),
+                    ),*/
                     TextField(
                       controller: sourceTextEditingController,
                       keyboardType: TextInputType.multiline,
@@ -358,7 +358,7 @@ class _TranslationState extends State<Translation> {
                           ),
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  width: 1, color: Colors.redAccent))),
+                                  width: 3, color: Colors.blueAccent))),
                       onChanged: (text) {
                         translate(sourceTextEditingController.text);
                         /*TextSelection previousSelection =
@@ -414,7 +414,7 @@ class _TranslationState extends State<Translation> {
                             ),
                           ),
                         ),
-                                                Container(
+                        Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(80),
                             gradient: const LinearGradient(
@@ -429,12 +429,12 @@ class _TranslationState extends State<Translation> {
                             shape: StadiumBorder(),
                             onPressed: () {
                               FlutterClipboard.paste().then((value) {
-                              // Do what ever you want with the value.
-                              setState(() {
-                                sourceTextEditingController.text = value;
-                                pasteValue = value;
+                                // Do what ever you want with the value.
+                                setState(() {
+                                  sourceTextEditingController.text = value;
+                                  pasteValue = value;
+                                });
                               });
-                            });
                             },
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -467,12 +467,12 @@ class _TranslationState extends State<Translation> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: const <Widget>[
-                        Text("Destination", style: TextStyle(fontSize: 25.0)),
+                        Text("To", style: TextStyle(fontSize: 25.0)),
                       ],
                     ),
-                    Container(
+                    /*Container(
                       margin: const EdgeInsets.symmetric(vertical: 10),
-                    ),
+                    ),*/
                     TextField(
                       controller: destTextEditingController,
                       keyboardType: TextInputType.multiline,
@@ -489,7 +489,7 @@ class _TranslationState extends State<Translation> {
                           ),
                           focusedBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                  width: 1, color: Colors.redAccent))),
+                                  width: 3, color: Colors.greenAccent))),
                     ),
                     Container(
                       margin: const EdgeInsets.symmetric(vertical: 10),
@@ -505,34 +505,136 @@ class _TranslationState extends State<Translation> {
                           ),
                           label: Text("Translate"),
                         ),*/
+                    GestureDetector(
+                      onTap: () {
+                        if (_hasSpeech) {
+                          if (speech.isListening) {
+                            stopListening();
+                          } else {
+                            startListening();
+                          }
+                        }
+                      },
+                      child: Container(
+                          height: size.height * 0.1,
+                          width: size.width * 0.2,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  blurRadius: 0,
+                                  spreadRadius: level * 1.5,
+                                  color: Colors.red.withOpacity(0.5))
+                            ],
+                            color: speech.isListening ? Colors.red : Colors.red,
+                            // border: Border.all(
+                            //   color: Colors.black26,
+                            //   width: 1,
+                            //   style: speech.isListening ? BorderStyle.none : BorderStyle.solid,
+                            // ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(100)),
+                          ),
+                          child: Icon(
+                            Icons.mic,
+                            size: 40,
+                            color: !speech.isListening
+                                ? Colors.white
+                                : Colors.white,
+                          )),
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        OutlinedButton.icon(
-                          onPressed: () {},
-                          icon: Icon(UniconsLine.camera_plus),
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(width: 1.0, color: Colors.green),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(80),
+                            gradient: const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [Colors.blue, Colors.blueAccent],
                             ),
                           ),
-                          label: Text("OCR"),
+                          child: MaterialButton(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            shape: StadiumBorder(),
+                            onPressed: () {
+                              setState(() {
+                                wordWidgets.clear();
+                                sourceTextEditingController.clear();
+                                destTextEditingController.clear();
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  const Icon(
+                                    UniconsLine.volume,
+                                    color: Colors.white,
+                                  ),
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 1),
+                                  ),
+                                  const Text(
+                                    'Voice',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                        OutlinedButton.icon(
-                          onPressed: () {},
-                          icon: Icon(UniconsLine.star),
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(width: 1.0, color: Colors.green),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(80),
+                            gradient: const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [Colors.blue, Colors.blueAccent],
                             ),
                           ),
-                          label: Text("Bookmark"),
+                          child: MaterialButton(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            shape: StadiumBorder(),
+                            onPressed: () {
+                              setState(() {
+                                wordWidgets.clear();
+                                sourceTextEditingController.clear();
+                                destTextEditingController.clear();
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  const Icon(
+                                    UniconsLine.star,
+                                    color: Colors.white,
+                                  ),
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 1),
+                                  ),
+                                  const Text(
+                                    'Bookmark',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
                       ],
                     ),
-                    GestureDetector(
+                    /*GestureDetector(
                       onTap: () {
                         if (_hasSpeech) {
                           if (speech.isListening) {
@@ -569,7 +671,7 @@ class _TranslationState extends State<Translation> {
                                 ? Colors.white
                                 : Colors.white,
                           )),
-                    ),
+                    ),*/
                   ],
                 ),
               ),

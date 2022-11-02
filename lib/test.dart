@@ -94,3 +94,27 @@ Container(
                           ),
                           label: Text("Paste"),
                         ),*/
+
+
+                        /*OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(UniconsLine.camera_plus),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(width: 1.0, color: Colors.green),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          label: Text("OCR"),
+                        ),
+                        OutlinedButton.icon(
+                          onPressed: () {},
+                          icon: Icon(UniconsLine.star),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(width: 1.0, color: Colors.green),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          label: Text("Bookmark"),
+                        ),*/
