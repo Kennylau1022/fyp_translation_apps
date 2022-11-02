@@ -227,7 +227,8 @@ class _TranslationState extends State<Translation> {
                               onChanged: (value) {
                                 setState(() {
                                   SourceselectedValue = value!;
-                                  _switchLang(sourcemap[SourceselectedValue]!['stt']!);
+                                  _switchLang(
+                                      sourcemap[SourceselectedValue]!['stt']!);
                                   translate(sourceTextEditingController.text);
                                 });
                               },
@@ -345,7 +346,7 @@ class _TranslationState extends State<Translation> {
                     TextField(
                       controller: sourceTextEditingController,
                       keyboardType: TextInputType.multiline,
-                      maxLines: 6,
+                      maxLines: 4,
                       maxLength: 128,
                       decoration: const InputDecoration(
                           hintText: "Enter Text",
@@ -360,51 +361,103 @@ class _TranslationState extends State<Translation> {
                                   width: 1, color: Colors.redAccent))),
                       onChanged: (text) {
                         translate(sourceTextEditingController.text);
-                        TextSelection previousSelection =
+                        /*TextSelection previousSelection =
                             sourceTextEditingController.selection;
                         sourceTextEditingController.text = text;
                         sourceTextEditingController.selection =
-                            previousSelection;
+                            previousSelection;*/
                       },
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        OutlinedButton.icon(
-                          onPressed: () {
-                            setState(() {
-                              wordWidgets.clear();
-                              sourceTextEditingController.clear();
-                              destTextEditingController.clear();
-                            });
-                          },
-                          icon: Icon(UniconsLine.times),
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(width: 1.0, color: Colors.green),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(80),
+                            gradient: const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [Colors.blue, Colors.blueAccent],
                             ),
                           ),
-                          label: Text("Clear"),
+                          child: MaterialButton(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            shape: StadiumBorder(),
+                            onPressed: () {
+                              setState(() {
+                                wordWidgets.clear();
+                                sourceTextEditingController.clear();
+                                destTextEditingController.clear();
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  const Icon(
+                                    UniconsLine.times,
+                                    color: Colors.white,
+                                  ),
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 1),
+                                  ),
+                                  const Text(
+                                    'Clear',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                        OutlinedButton.icon(
-                          onPressed: () {
-                            FlutterClipboard.paste().then((value) {
+                                                Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(80),
+                            gradient: const LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              colors: [Colors.blue, Colors.blueAccent],
+                            ),
+                          ),
+                          child: MaterialButton(
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                            shape: StadiumBorder(),
+                            onPressed: () {
+                              FlutterClipboard.paste().then((value) {
                               // Do what ever you want with the value.
                               setState(() {
                                 sourceTextEditingController.text = value;
                                 pasteValue = value;
                               });
                             });
-                          },
-                          icon: Icon(UniconsLine.file_copy_alt),
-                          style: OutlinedButton.styleFrom(
-                            side: BorderSide(width: 1.0, color: Colors.green),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  const Icon(
+                                    UniconsLine.file_copy_alt,
+                                    color: Colors.white,
+                                  ),
+                                  Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 1),
+                                  ),
+                                  const Text(
+                                    'Paste',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                          label: Text("Paste"),
                         ),
                       ],
                     ),
@@ -423,7 +476,7 @@ class _TranslationState extends State<Translation> {
                     TextField(
                       controller: destTextEditingController,
                       keyboardType: TextInputType.multiline,
-                      maxLines: 6,
+                      maxLines: 4,
                       readOnly: true,
                       //maxLength: 128,
                       decoration: const InputDecoration(
@@ -480,41 +533,43 @@ class _TranslationState extends State<Translation> {
                       ],
                     ),
                     GestureDetector(
-                    onTap: () {
-                      if (_hasSpeech) {
-                        if (speech.isListening) {
-                          stopListening();
-                        } else {
-                          startListening();
+                      onTap: () {
+                        if (_hasSpeech) {
+                          if (speech.isListening) {
+                            stopListening();
+                          } else {
+                            startListening();
+                          }
                         }
-                      }
-                    },
-                    child: Container(
-                        width: 100,
-                        height: 100,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                blurRadius: 0,
-                                spreadRadius: level * 1.5,
-                                color: Colors.red.withOpacity(0.5))
-                          ],
-                          color: speech.isListening ? Colors.red : Colors.red,
-                          // border: Border.all(
-                          //   color: Colors.black26,
-                          //   width: 1,
-                          //   style: speech.isListening ? BorderStyle.none : BorderStyle.solid,
-                          // ),
-                          borderRadius: BorderRadius.all(Radius.circular(100)),
-                        ),
-                        child: Icon(
-                          Icons.mic,
-                          size: 40,
-                          color:
-                              !speech.isListening ? Colors.white : Colors.white,
-                        )),
-                  ),
+                      },
+                      child: Container(
+                          width: 100,
+                          height: 100,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            boxShadow: [
+                              BoxShadow(
+                                  blurRadius: 0,
+                                  spreadRadius: level * 1.5,
+                                  color: Colors.red.withOpacity(0.5))
+                            ],
+                            color: speech.isListening ? Colors.red : Colors.red,
+                            // border: Border.all(
+                            //   color: Colors.black26,
+                            //   width: 1,
+                            //   style: speech.isListening ? BorderStyle.none : BorderStyle.solid,
+                            // ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(100)),
+                          ),
+                          child: Icon(
+                            Icons.mic,
+                            size: 40,
+                            color: !speech.isListening
+                                ? Colors.white
+                                : Colors.white,
+                          )),
+                    ),
                   ],
                 ),
               ),

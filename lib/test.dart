@@ -39,3 +39,58 @@ class DX extends StatelessWidget {
     );
   }
 }
+
+
+/*
+
+Container(
+                          decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                  colors: [Colors.blue, Colors.red]), // 渐变色
+                              borderRadius: BorderRadius.circular(25)),
+                          child:OutlinedButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                wordWidgets.clear();
+                                sourceTextEditingController.clear();
+                                destTextEditingController.clear();
+                              });
+                            },
+                            icon: Icon(UniconsLine.times),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(width: 1.0, color: Colors.green),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            label: Text("Clear"),
+                          ),
+                        ),
+                        */
+
+
+
+
+
+
+
+/*
+                                                OutlinedButton.icon(
+                          onPressed: () {
+                            FlutterClipboard.paste().then((value) {
+                              // Do what ever you want with the value.
+                              setState(() {
+                                sourceTextEditingController.text = value;
+                                pasteValue = value;
+                              });
+                            });
+                          },
+                          icon: Icon(UniconsLine.file_copy_alt),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(width: 1.0, color: Colors.green),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          label: Text("Paste"),
+                        ),*/
