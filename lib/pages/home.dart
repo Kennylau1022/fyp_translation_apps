@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fyp_translation_apps/pages/profile.dart';
+import 'package:fyp_translation_apps/pages/OCR.dart';
 import 'package:fyp_translation_apps/pages/Bookmark.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 import 'CPage.dart';
@@ -147,7 +147,7 @@ class _HomeState extends State<Home> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CPage(),
+                  builder: (context) => OCR(),
                 ));
           },
         ),

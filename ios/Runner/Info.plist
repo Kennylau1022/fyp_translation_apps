@@ -51,5 +51,9 @@
 <string>Speech Recognition</string> 
 <key>NSMicrophoneUsageDescription</key> 
 <string>Microphone</string> 
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Used to demonstrate image picker plugin</string>
+<key>NSCameraUsageDescription</key>
+<string>Used to demonstrate image picker plugin</string>
 </dict>
 </plist>

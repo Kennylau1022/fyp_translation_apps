@@ -5,6 +5,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:fyp_translation_apps/data.dart';
 
 import 'CPage.dart';
+import 'OCR.dart';
 import 'Translation.dart';
 import 'home.dart';
 
@@ -140,7 +141,13 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => OCR(),
+                                    ));
+                              },
                               child: Center(
                                 child: Row(
                                   children: const <Widget>[
@@ -204,7 +211,13 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () {
+                                 Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CPage(),
+                                    ));
+                              },
                               child: Center(
                                 child: Row(
                                   children: const <Widget>[
