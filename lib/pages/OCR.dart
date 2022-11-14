@@ -213,7 +213,7 @@ class _OCRState extends State<OCR> {
           uiSettings: [
             AndroidUiSettings(
                 toolbarTitle: 'Photo Editor',
-                toolbarColor: Colors.deepOrange,
+                toolbarColor: Colors.blue,
                 toolbarWidgetColor: Colors.white,
                 initAspectRatio: CropAspectRatioPreset.original,
                 lockAspectRatio: false),

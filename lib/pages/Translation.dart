@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/services.dart';
 import 'package:fyp_translation_apps/pages/HomePage.dart';
 import 'package:unicons/unicons.dart';
 import 'package:clipboard/clipboard.dart';
@@ -425,8 +426,10 @@ class _TranslationState extends State<Translation> {
                         keyboardType: TextInputType.multiline,
                         maxLines: 4,
                         maxLength: 128,
+                        maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         decoration: const InputDecoration(
                             hintText: "Enter Text",
+                            border: OutlineInputBorder(),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
                                   width: 3,
