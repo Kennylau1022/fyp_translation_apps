@@ -11,7 +11,7 @@ class _BookmarkState extends State<Bookmark> {
   Widget build(BuildContext context) {
      return Scaffold(
       body: Center(
-        child: Text("你好")),
+        child: Text("BookmarkPage")),
       
     );
   }
